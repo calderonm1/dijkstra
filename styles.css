@@ -1,0 +1,9 @@
+#myCanvas {
+  background-image: url('./floorplans/1.png');
+  background-size: cover;
+}
+
+#button1 {
+  width: 100px;
+  height: 50px;
+}

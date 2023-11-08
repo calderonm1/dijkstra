@@ -88,6 +88,29 @@ void printPath(struct vertex end, int prev[], struct vertex vertices[]){
     printf("%d (start)\n", currV);
 }
 
+//create a txt file containing the coordinates of each vertex in the path
+void generateCoordinates(struct vertex end, int prev[], int num_vertices, struct vertex vertices[]){
+    const char *filename = "coordinates.txt"; //create output file
+    FILE *file = fopen(filename, "w"); //open output file for writing
+
+    int currV = end.id; //begin from the final vertex in the path
+    int parentIndex = prev[currV]; //get the index of the vertex prior to the current vertex in the path
+
+    //iterate while there still exists a parent vertex; if not that means we have reached the end of the path (start vertex will not have a parent)
+    while (parentIndex != -1){
+        //find the vertex in the vertices array
+        for (int i = 0; i < num_vertices; ++i){
+            if (currV == vertices[i].id){
+                //add vertex coordinates to output file
+                fprintf(file, "%d,%d\n", vertices[i].x, vertices[i].y);
+            }
+        }
+        currV = parentIndex; //set the current vertex to the parent
+        parentIndex = prev[currV]; //set the parent vertex to the parent of the parent
+    }
+    fprintf(file, "%d,%d\n", vertices[currV].x, vertices[currV].y); //add the final vertex
+}
+
 //dijkstra algorithm
 void dijkstra(struct vertex start, struct vertex end, struct vertex vertices[], struct edge edges[], int num_vertices, int num_edges){
     int visited[num_vertices]; //whether a vertex has been processed or not
@@ -121,17 +144,20 @@ void dijkstra(struct vertex start, struct vertex end, struct vertex vertices[], 
         }
     }
     //print the distances from each vertex from the start vertex
-    printSolution(dist, num_vertices);
+    //printSolution(dist, num_vertices);
 
     //print the path from the start vertex to the end vertex
-    printPath(end, prev, vertices);
+    //printPath(end, prev, vertices);
+
+    //create the output file
+    generateCoordinates(end, prev, num_vertices, vertices);
 }
 
 int main(int argc, char* argv[]){
     int num_vertices; //number of vertices
     int num_edges; //number of edges
-    int start = 36; //start vertex
-    int end = 11; //end vertex
+    int start = atoi(argv[3]); //start vertex
+    int end = atoi(argv[4]); //end vertex
 
     char* filename_V = argv[1]; //argument 1 from command line, txt file containing vertices
     char* filename_E = argv[2]; //argument 2 from command line, txt file containing edges
